@@ -13,7 +13,6 @@ In real-world scenarios, analysts first structure messy e-commerce inventory dat
 
 Analysts use SQL for exploratory data analysis to uncover patterns, anomalies, and data quality issues like stock gaps and pricing errors before deeper insights can be drawn.
 
-
 ✅ Implement **Data Cleaning** to handle null values, remove invalid entries, and convert pricing from paise to rupees
 
 Analysts clean the data using SQL by correcting invalid entries and standardizing values like prices, ensuring consistency and reliability for accurate business analysis.
