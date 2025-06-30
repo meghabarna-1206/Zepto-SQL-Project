@@ -7,19 +7,20 @@ The goal is to simulate how actual data analysts in the e-commerce or retail ind
 
 ✅ Set up a messy, real-world e-commerce inventory **database**
 
-In real-world scenarios, inventory data from e-commerce platforms often comes in messy and inconsistent formats—scattered across multiple CSVs or exports from different sources. A data analyst’s first task is to load this data into SQL by creating a structured schema that can accommodate inconsistencies like missing product names, incorrect pricing units (e.g., paise instead of rupees), and vague category labels. This foundational step simulates how analysts prepare raw retail data to be usable for analysis.
+In real-world scenarios, analysts first structure messy e-commerce inventory data into SQL by handling inconsistencies like missing values, pricing errors, and vague categories to make it analysis-ready.
 
 ✅ Perform **Exploratory Data Analysis (EDA)** to explore product categories, availability, and pricing inconsistencies
 
-Once the database is set up, analysts perform exploratory data analysis using SQL to gain a high-level understanding of the data. They examine how many unique categories exist, identify products that frequently go out of stock, find inconsistencies in pricing (such as discounts larger than the MRP), and assess how complete the data is. This phase helps uncover hidden patterns, anomalies, and the scale of data issues that need cleaning before insights can be trusted.
+Analysts use SQL for exploratory data analysis to uncover patterns, anomalies, and data quality issues like stock gaps and pricing errors before deeper insights can be drawn.
+
 
 ✅ Implement **Data Cleaning** to handle null values, remove invalid entries, and convert pricing from paise to rupees
 
-After understanding the data through EDA, the analyst proceeds to clean it using SQL. This involves removing or correcting rows with missing or invalid entries, such as negative inventory counts or blank product names. Analysts also standardize price values—converting prices stored in paise to rupees by dividing by 100—ensuring consistency across the dataset. The cleaned dataset is now reliable and forms the basis for accurate business analysis.
+Analysts clean the data using SQL by correcting invalid entries and standardizing values like prices, ensuring consistency and reliability for accurate business analysis.
 
 ✅ Write **business-driven SQL queries** to derive insights around **pricing, inventory, stock availability, revenue** and more
 
-With a clean and structured dataset in place, the analyst writes business-focused SQL queries to generate meaningful insights. These queries might identify which product categories generate the most revenue, flag products that are almost out of stock, or calculate total discount loss due to heavy markdowns. Such insights are used by business teams to make informed decisions about pricing, restocking, promotions, and overall inventory management.
+With clean data, analysts write business-driven SQL queries to extract insights on revenue, stock levels, and discounts that guide pricing, restocking, and inventory decisions.
 
 ## 📁 Dataset Overview
 The dataset was sourced from [Kaggle](https://www.kaggle.com/datasets/palvinder2006/zepto-inventory-dataset/data?select=zepto_v2.csv) and was originally scraped from Zepto’s official product listings. It mimics what is typically encountered in a real-world e-commerce inventory system.
@@ -54,7 +55,7 @@ We start by creating a SQL table with appropriate data types:
 
 ```sql
 CREATE TABLE zepto (
-  sku_id SERIAL PRIMARY KEY,
+  sku_id INT AUTO INCREMENT PRIMARY KEY,
   category VARCHAR(120),
   name VARCHAR(150) NOT NULL,
   mrp NUMERIC(8,2),
@@ -92,34 +93,163 @@ CREATE TABLE zepto (
 ### 3. 🔍 Data Exploration
 - Counted the total number of records in the dataset
 
+  ```sql
+  select count(*) from zepto;
+  ```
+
 - Viewed a sample of the dataset to understand structure and content
+
+  ```sql
+  SELECT * FROM zepto
+  LIMIT 10;
+  ```
 
 - Checked for null values across all columns
 
+  ```sql
+  SELECT * FROM zepto
+  WHERE name IS NULL
+  OR
+  category IS NULL
+  OR
+  mrp IS NULL
+  OR
+  discountPercent IS NULL
+  OR
+  discountedSellingPrice IS NULL
+  OR
+  weightInGms IS NULL
+  OR
+  availableQuantity IS NULL
+  OR
+  outOfStock IS NULL
+  OR
+  quantity IS NULL;
+  ```
+
 - Identified distinct product categories available in the dataset
+
+```sql
+  SELECT DISTINCT category
+  FROM zepto
+  ORDER BY category;
+```
 
 - Compared in-stock vs out-of-stock product counts
 
+  ```sql
+  SELECT outOfStock, COUNT(sku_id)
+  FROM zepto
+  GROUP BY outOfStock;
+  ```
+
 - Detected products present multiple times, representing different SKUs
+
+  ```sql
+  SELECT name, COUNT(sku_id) AS `Number of SKUs`
+  FROM zepto
+  GROUP BY name
+  HAVING count(sku_id) > 1
+  ORDER BY count(sku_id) DESC;
+  ```  
 
 ### 4. 🧹 Data Cleaning
 - Identified and removed rows where MRP or discounted selling price was zero
 
+  ```sql
+  SELECT * FROM zepto
+  WHERE mrp = 0 OR discountedSellingPrice = 0;
+
+  DELETE FROM zepto
+  WHERE mrp = 0;
+  ```
+
 - Converted mrp and discountedSellingPrice from paise to rupees for consistency and readability
+
+  ```sql
+  UPDATE zepto
+  SET mrp = mrp / 100.0,
+  discountedSellingPrice = discountedSellingPrice / 100.0;
+
+  SELECT mrp, discountedSellingPrice FROM zepto;
+  ```
   
 ### 5. 📊 Business Insights
 - Found top 10 best-value products based on discount percentage
 
+  ```sql
+  SELECT DISTINCT name, mrp, discountPercent
+  FROM zepto
+  ORDER BY discountPercent DESC
+  LIMIT 10;
+  ```
+
 - Identified high-MRP products that are currently out of stock
+
+  ```sql
+  SELECT DISTINCT name,mrp
+  FROM zepto
+  WHERE outOfStock = TRUE and mrp > 300
+  ORDER BY mrp DESC;
+  ```
 
 - Estimated potential revenue for each product category
 
+  ```sql
+  SELECT category,
+  SUM(discountedSellingPrice * availableQuantity) AS total_revenue
+  FROM zepto
+  GROUP BY category
+  ORDER BY total_revenue;
+  ```
+
 - Filtered expensive products (MRP > ₹500) with minimal discount
+
+  ```sql
+  SELECT DISTINCT name, mrp, discountPercent
+  FROM zepto
+  WHERE mrp > 500 AND discountPercent < 10
+  ORDER BY mrp DESC, discountPercent DESC;
+  ```
 
 - Ranked top 5 categories offering highest average discounts
 
+  ```sql
+  SELECT category,
+  ROUND(AVG(discountPercent),2) AS avg_discount
+  FROM zepto
+  GROUP BY category
+  ORDER BY avg_discount DESC
+  LIMIT 5;
+  ```
+
 - Calculated price per gram to identify value-for-money products
+
+  ```sql
+  SELECT DISTINCT name, weightInGms, discountedSellingPrice,
+  ROUND(discountedSellingPrice/weightInGms,2) AS price_per_gram
+  FROM zepto
+  WHERE weightInGms >= 100
+  ORDER BY price_per_gram;
+  ```
 
 - Grouped products based on weight into Low, Medium, and Bulk categories
 
+  ```sql
+  SELECT DISTINCT name, weightInGms,
+  CASE WHEN weightInGms < 1000 THEN 'Low'
+	  WHEN weightInGms < 5000 THEN 'Medium'
+	  ELSE 'Bulk'
+	  END AS weight_category
+  FROM zepto;
+  ```
+  
 - Measured total inventory weight per product category
+
+  ```sql
+  SELECT category,
+  SUM(weightInGms * availableQuantity) AS total_weight
+  FROM zepto
+  GROUP BY category
+  ORDER BY total_weight;
+  ```
