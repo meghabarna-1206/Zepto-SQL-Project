@@ -253,6 +253,6 @@ CREATE TABLE zepto (
   ORDER BY total_weight;
   ```
 
-  ![Zepto design](3.jpeg)
+  ![Zepto design](3.jpg)
 
   
