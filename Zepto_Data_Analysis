@@ -1,4 +1,4 @@
-```sql
+
 drop table if exists zepto;
 
 create table zepto (
@@ -13,7 +13,7 @@ weightInGms INTEGER,
 outOfStock BOOLEAN,	
 quantity INTEGER
 );
-```
+
 --data exploration
 
 --count of rows
