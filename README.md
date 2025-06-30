@@ -128,11 +128,11 @@ CREATE TABLE zepto (
 
 - Identified distinct product categories available in the dataset
 
-```sql
+  ```sql
   SELECT DISTINCT category
   FROM zepto
   ORDER BY category;
-```
+  ```
 
 - Compared in-stock vs out-of-stock product counts
 
