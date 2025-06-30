@@ -6,15 +6,19 @@
 The goal is to simulate how actual data analysts in the e-commerce or retail industries work behind the scenes to use SQL to:
 
 ✅ Set up a messy, real-world e-commerce inventory **database**
+-In real-world scenarios, inventory data from e-commerce platforms often comes in messy and inconsistent formats—scattered across multiple CSVs or exports from different sources. A data analyst’s first task is to load this data into SQL by creating a structured schema that can accommodate inconsistencies like missing product names, incorrect pricing units (e.g., paise instead of rupees), and vague category labels. This foundational step simulates how analysts prepare raw retail data to be usable for analysis.
 
 ✅ Perform **Exploratory Data Analysis (EDA)** to explore product categories, availability, and pricing inconsistencies
+-Once the database is set up, analysts perform exploratory data analysis using SQL to gain a high-level understanding of the data. They examine how many unique categories exist, identify products that frequently go out of stock, find inconsistencies in pricing (such as discounts larger than the MRP), and assess how complete the data is. This phase helps uncover hidden patterns, anomalies, and the scale of data issues that need cleaning before insights can be trusted.
 
 ✅ Implement **Data Cleaning** to handle null values, remove invalid entries, and convert pricing from paise to rupees
+-After understanding the data through EDA, the analyst proceeds to clean it using SQL. This involves removing or correcting rows with missing or invalid entries, such as negative inventory counts or blank product names. Analysts also standardize price values—converting prices stored in paise to rupees by dividing by 100—ensuring consistency across the dataset. The cleaned dataset is now reliable and forms the basis for accurate business analysis.
 
 ✅ Write **business-driven SQL queries** to derive insights around **pricing, inventory, stock availability, revenue** and more
+-With a clean and structured dataset in place, the analyst writes business-focused SQL queries to generate meaningful insights. These queries might identify which product categories generate the most revenue, flag products that are almost out of stock, or calculate total discount loss due to heavy markdowns. Such insights are used by business teams to make informed decisions about pricing, restocking, promotions, and overall inventory management.
 
 ## 📁 Dataset Overview
-The dataset was sourced from [Kaggle](https://www.kaggle.com/datasets/palvinder2006/zepto-inventory-dataset/data?select=zepto_v2.csv) and was originally scraped from Zepto’s official product listings. It mimics what you’d typically encounter in a real-world e-commerce inventory system.
+The dataset was sourced from [Kaggle](https://www.kaggle.com/datasets/palvinder2006/zepto-inventory-dataset/data?select=zepto_v2.csv) and was originally scraped from Zepto’s official product listings. It mimics what is typically encountered in a real-world e-commerce inventory system.
 
 Each row represents a unique SKU (Stock Keeping Unit) for a product. Duplicate product names exist because the same product may appear multiple times in different package sizes, weights, discounts, or categories to improve visibility – exactly how real catalog data looks.
 
