@@ -83,7 +83,7 @@ CREATE TABLE zepto (
  
 - Right-click the Zepto table → Table Data Import Wizard.
 - In the wizard:
-- Choose your file: C:\Users\Megha\OneDrive\Desktop\zepto_v2.csv
+- Choose the file location 
 
 - If prompted, choose to import into existing table → Select Zepto.
 - Click Next. Ultimately, click Finish.
